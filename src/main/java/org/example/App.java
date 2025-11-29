@@ -5,5 +5,8 @@ public class App {
 
         Validator validator = new Validator();
         StringSchema schema = validator.string();
+
+        schema.isValid("");
+        schema.isValid(null);
     }
 }
