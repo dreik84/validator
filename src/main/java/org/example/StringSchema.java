@@ -1,6 +1,6 @@
 package org.example;
 
-public class StringSchema {
+public class StringSchema extends BaseSchema<String> {
 
     private boolean required = false;
     private int minLength = 0;
@@ -21,6 +21,7 @@ public class StringSchema {
         return this;
     }
 
+    @Override
     public boolean isValid(String value) {
 
         if (required) {
