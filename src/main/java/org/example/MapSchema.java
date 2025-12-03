@@ -1,42 +1,31 @@
 package org.example;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class MapSchema extends BaseSchema<Map<?, ?>> {
 
-    private boolean required;
-    private int sizeOf;
-
-    public MapSchema() {
-        required = false;
-        sizeOf = -1;
-    }
-
     public MapSchema required() {
-        required = true;
+        addValidation("required", Objects::nonNull);
         return this;
     }
 
-    public MapSchema sizeOf(int size) {
-        sizeOf = size;
+    public MapSchema sizeof(int size) {
+        addValidation("sizeof", map -> map != null && map.size() == size);
         return this;
     }
 
-    @Override
-    public boolean isValid(Map<?, ?> value) {
+    public <T> MapSchema shape(Map<String, BaseSchema<T>> shemas) {
 
-        if (required) {
-            if (value == null) {
-                return false;
-            }
-        }
+        addValidation("shape", map -> {
+            return shemas.entrySet().stream().allMatch(entry -> {
+                String key = entry.getKey();
+                BaseSchema<T> schema = entry.getValue();
 
-        if (sizeOf > -1) {
-            if (value.size() != sizeOf) {
-                return false;
-            }
-        }
+                return !map.containsKey(key) || schema.isValid((T) map.get(key));
+            });
+        });
 
-        return true;
+        return this;
     }
 }

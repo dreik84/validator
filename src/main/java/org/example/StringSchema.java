@@ -2,46 +2,18 @@ package org.example;
 
 public class StringSchema extends BaseSchema<String> {
 
-    private boolean required = false;
-    private int minLength = 0;
-    private String contains = "";
-
     public StringSchema required() {
-        required = true;
+        addValidation("required", text -> text != null && !text.isEmpty());
         return this;
     }
 
-    public StringSchema minLength(int len) {
-        minLength = len;
+    public StringSchema minLength(int min) {
+        addValidation("minLength", text -> text != null && text.length() >= min);
         return this;
     }
 
-    public StringSchema contains(String sub) {
-        contains = sub;
+    public StringSchema contains(String test) {
+        addValidation("contains", text -> text != null && text.contains(test));
         return this;
-    }
-
-    @Override
-    public boolean isValid(String value) {
-
-        if (required) {
-            if (value == null || value.isEmpty()) {
-                return false;
-            }
-        }
-
-        if (minLength > 0) {
-            if (value == null || value.length() < minLength) {
-                return false;
-            }
-        }
-
-        if (!contains.isEmpty()) {
-            if (value == null || !value.contains(contains)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
