@@ -15,10 +15,10 @@ public class MapSchema extends BaseSchema<Map<?, ?>> {
         return this;
     }
 
-    public <T> MapSchema shape(Map<String, BaseSchema<T>> shemas) {
+    public <T> MapSchema shape(Map<String, BaseSchema<T>> schemas) {
 
         addValidation("shape", map -> {
-            return shemas.entrySet().stream().allMatch(entry -> {
+            return schemas.entrySet().stream().allMatch(entry -> {
                 String key = entry.getKey();
                 BaseSchema<T> schema = entry.getValue();
 

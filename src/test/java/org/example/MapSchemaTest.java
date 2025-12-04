@@ -30,7 +30,7 @@ class MapSchemaTest {
 
         assertTrue(schema.isValid(data));
 
-        schema.sizeOf(2);
+        schema.sizeof(2);
 
         assertFalse(schema.isValid(data));
 
@@ -42,11 +42,39 @@ class MapSchemaTest {
     @Test
     void combiner() {
         MapSchema schema = new MapSchema();
-        schema.sizeOf(4).required().sizeOf(2);
+        schema.sizeof(4).required().sizeof(2);
         Map<String, String> data = Map.of("key1", "value1", "key2", "value2");
 
         assertTrue(schema.isValid(data));
         assertFalse(schema.isValid(null));
         assertFalse(schema.isValid(new HashMap<>()));
+    }
+
+    @Test
+    void shape() {
+        Validator validator = new Validator();
+        MapSchema schema = validator.map();
+        Map<String, BaseSchema<String>> schemas = new HashMap<>();
+        schemas.put("firstName", validator.string().required());
+        schemas.put("lastName", validator.string().required().minLength(2));
+        schema.shape(schemas);
+
+        Map<String, String> human1 = new HashMap<>();
+        human1.put("firstName", "John");
+        human1.put("lastName", "Smith");
+
+        assertTrue(schema.isValid(human1));
+
+        Map<String, String> human2 = new HashMap<>();
+        human2.put("firstName", "John");
+        human2.put("lastName", null);
+
+        assertFalse(schema.isValid(human2));
+
+        Map<String, String> human3 = new HashMap<>();
+        human3.put("firstName", "John");
+        human3.put("lastName", "B");
+
+        assertFalse(schema.isValid(human3));
     }
 }
